@@ -427,11 +427,10 @@ if (document.querySelector(".slider-rooms__body")) { // запускаем сл�
   observeParents: true,
   slidesPerView: "auto",
   spaceBetween: 24,
-  speed: 1400,
+  speed: 800,
   loop: true,
   watchOverflow: true,
-  loopAdditionalSlides: 5,
-  preloadImages: false,
+
   parallax: true,
   pagination: {
     el: ".slider-rooms__dotts",
@@ -440,6 +439,41 @@ if (document.querySelector(".slider-rooms__body")) { // запускаем сл�
   navigation: {
     nextEl: ".slider-rooms .slider-arrow_next",
     prevEl: ".slider-rooms .slider-arrow_prev",
+  }
+});
+}
+
+
+if (document.querySelector(".slider-tips__body")) { // запускаем слайдер
+  new Swiper(".slider-tips__body", {
+  observer: true,
+  observeParents: true,
+  slidesPerView: 3,
+  spaceBetween: 32,
+  speed: 800,
+  loop: true,
+  watchOverflow: true,
+  pagination: {
+    el: ".slider-tips__dotts",
+    clickable: true,
+  },
+  navigation: {
+    nextEl: ".slider-tips .slider-arrow_next",
+    prevEl: ".slider-tips .slider-arrow_prev",
+  },
+  breakpoints: {
+    320: { 
+      slidesPerView: 1.1,
+      spaceBetween: 15
+    },
+    768: { 
+      slidesPerView: 2,
+      spaceBetween: 20
+    },
+    992: { 
+      slidesPerView: 3,
+      spaceBetween: 32
+    }
   }
 });
 }
@@ -862,3 +896,48 @@ let elements = document.querySelectorAll(".menu-footer__title");
 
  
 }
+
+
+// furniture galery
+
+const furniture = document.querySelector(".furniture__body");
+if (furniture && !isMobile.any()) {
+  const furnitureItems = document.querySelector(".furniture__items");
+  const furnitureColumn = document.querySelectorAll(".furniture__column");
+  const speed = furniture.dataset.speed;
+
+  let positionX = 0;
+  let coordXprocent = 0;
+
+
+  function setMouseGalleryStyle() {
+    let furnitureItemsWidth = 0;
+    furnitureColumn.forEach(element => {
+      furnitureItemsWidth += element.offsetWidth;
+    });
+    const furnitureDifferent = furnitureItemsWidth - furniture.offsetWidth;
+    const distX = Math.floor(coordXprocent - positionX);
+    positionX = positionX + (distX * speed);
+    let position = furnitureDifferent / 200 * positionX;
+
+    furnitureItems.style.cssText = `transform: translate3d(${-position}px,0,0);`;
+
+    if (Math.abs(distX) > 0) {
+      requestAnimationFrame(setMouseGalleryStyle);
+    } else {
+      furniture.classList.remove("_init");
+    }
+  }
+    furniture.addEventListener("mousemove" , function (e) {
+      const furnitureWidth = furniture.offsetWidth;
+
+      const coordX = e.pageX - furnitureWidth / 2 ;
+
+      coordXprocent = coordX / furnitureWidth * 200;
+
+      if (!furniture.classList.contains("_init")) {
+        requestAnimationFrame(setMouseGalleryStyle);
+        furniture.classList.add("_init");
+      }
+    });
+  }
